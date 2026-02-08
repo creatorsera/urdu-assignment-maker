@@ -314,6 +314,11 @@
             border-top: 1px solid var(--border-color); height: 65px; z-index: 100;
             padding-bottom: var(--safe-area-bottom); justify-content: space-around; align-items: center;
             box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+            <!-- Add this inside the mobile-nav div, before the closing div -->
+<button class="nav-item" type="button" onclick="location.href='privacy.html'">
+    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    <span>Privacy</span>
+</button>
         }
         .nav-item {
             flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
