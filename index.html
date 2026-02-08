@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- SEO Meta -->
+    <title>Urdu Assignment Maker (PDF) | Free Online Urdu Editor</title>
+    <meta name="description" content="Free Urdu assignment maker and editor. Write assignments online in Urdu and generate a clean PDF instantly. Supports Nastaliq font and proper formatting." />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://assignment-six-sable.vercel.app/" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- OpenGraph (WhatsApp / Facebook) -->
+    <meta property="og:title" content="Urdu Assignment Maker (PDF) - Free Online Urdu Editor" />
+    <meta property="og:description" content="Write Urdu assignments online and export PDF instantly. Nastaliq font support with clean formatting." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://assignment-six-sable.vercel.app/" />
+    <meta property="og:site_name" content="Urdu Assignment Maker" />
+
+    <!-- Twitter Preview -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Urdu Assignment Maker (PDF) - Free Online Urdu Editor" />
+    <meta name="twitter:description" content="Write Urdu assignments online and export PDF instantly with clean formatting." />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --accent: #f59e0b; 
+            --bg-body: #f1f5f9;
+            --sidebar-bg: #ffffff;
+            --paper-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --urdu-font: 'Noto Nastaliq Urdu', serif;
+            --sans-font: 'Inter', sans-serif;
+            
+            --base-font-size: 18px;
+            --base-line-height: 2.2;
+            --header-height: 60px; 
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body {
+            font-family: var(--sans-font); 
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: var(--text-main);
+            padding-top: var(--header-height); 
+        }
+
+        /* --- HEADER --- */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 1000; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+        /* BUTTONS */
+        .btn-icon {
+            background: transparent; border: none; border-radius: 8px;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-main); transition: background 0.2s;
+        }
+        .btn-icon:hover { background: var(--bg-body); }
+        .btn-icon svg { width: 22px; height: 22px; stroke-width: 2; }
+
+        .btn-download {
+            background: var(--primary); color: white; border: none;
+            padding: 8px 20px; border-radius: 8px; font-family: var(--urdu-font);
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+            display: flex; align-items: center; gap: 6px; transition: transform 0.1s;
+        }
+        .btn-download:active { transform: scale(0.96); }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex; flex: 1; height: calc(100vh - var(--header-height));
+            overflow: hidden; position: relative;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 340px; background: var(--sidebar-bg); border-left: 1px solid var(--border-color);
+            display: flex; flex-direction: column; height: 100%; z-index: 30;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-header {
+            padding: 16px; border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between; background: #f8fafc;
+        }
+        .sidebar-title { font-size: 1rem; font-weight: 700; color: var(--text-main); }
+        .close-sidebar-btn { display: none; cursor: pointer; padding: 4px; border: none; background: transparent; color: var(--text-main); }
+
+        .sidebar-content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 80px; }
+
+        /* --- FORM ELEMENTS --- */
+        .section-label {
+            display: flex; justify-content: space-between; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+            color: var(--text-light); margin-bottom: 10px; margin-top: 20px; font-family: var(--sans-font);
+        }
+
+        .input-group { margin-bottom: 12px; }
+        
+        input[type="text"] {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px;
+            font-family: var(--urdu-font); font-size: 1rem; line-height: 1.8; direction: rtl;
+            background: #fff; transition: border-color 0.2s;
+        }
+        input[type="text"]:focus { border-color: var(--primary); }
+        
+        .btn-small {
+            padding: 8px 12px; background: #eff6ff; color: var(--primary); border: none;
+            border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
+            white-space: nowrap; transition: background 0.2s;
+        }
+        .btn-small:hover { background: #dbeafe; }
+
+        /* Sliders */
+        .slider-box { background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border-color); }
+        .slider-header { display: flex; justify-content: space-between; font-family: var(--sans-font); font-size: 0.8rem; margin-bottom: 8px; color: var(--text-main); }
+        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--primary); height: 4px; background: #cbd5e1; border-radius: 2px; appearance: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--primary); border-radius: 50%; cursor: pointer; }
+
+        /* Counters */
+        .stats-box { display: flex; gap: 10px; margin-bottom: 15px; }
+        .stat-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: var(--text-main); font-family: var(--sans-font); display: flex; align-items: center; gap: 4px;}
+
+        /* --- MAIN AREA --- */
+        .main-area {
+            flex: 1; background: #e2e8f0; display: flex; flex-direction: column;
+            align-items: center; padding: 30px; overflow-y: auto; position: relative; scroll-behavior: smooth;
+        }
+
+        /* TOOLBAR */
+        .main-sticky-toolbar {
+            position: sticky; top: 0; z-index: 50; background: white;
+            border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 8px; margin-bottom: 25px; display: flex; gap: 6px; flex-wrap: wrap;
+            justify-content: center; border: 1px solid var(--border-color); width: 100%; max-width: 800px;
+        }
+
+        .tool-btn {
+            height: 36px; border: 1px solid transparent; background: transparent; border-radius: 6px;
+            cursor: pointer; font-weight: 700; color: var(--text-main);
+            display: flex; align-items: center; justify-content: center; min-width: 36px;
+            font-family: var(--sans-font); font-size: 0.9rem; transition: all 0.2s; user-select: none;
+        }
+        .tool-btn:hover { background: #f1f5f9; }
+        .tool-btn.active { background: var(--primary); color: white; }
+        .tool-divider { width: 1px; background: #e2e8f0; margin: 0 4px; }
+
+        /* Size Group */
+        .size-group {
+            display: flex; align-items: center; border: 1px solid var(--border-color);
+            border-radius: 6px; overflow: hidden; background: white;
+        }
+        .size-group input {
+            border: none; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color);
+            width: 45px; height: 36px; text-align: center; padding: 0; font-size: 0.9rem; font-family: var(--sans-font);
+        }
+        .size-group button { border: none; background: #f8fafc; width: 36px; height: 36px; cursor: pointer; font-weight: bold; color: var(--text-main); }
+        .size-group button:hover { background: #e2e8f0; }
+
+        .btn-highlight { background: #fffbeb; }
+        .btn-highlight:hover { background: #fef3c7; }
+
+        /* --- PAPER --- */
+        .paper {
+            background: var(--paper-bg); width: 210mm; min-height: 297mm; padding: 25mm;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex; flex-direction: column; flex-shrink: 0; margin-bottom: 80px; position: relative;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+
+        .paper-font {
+            font-family: var(--urdu-font); font-size: var(--base-font-size);
+            font-weight: 700; line-height: var(--base-line-height); color: black;
+        }
+
+        .paper-header-school { text-align: center; margin-bottom: 25px; text-decoration: underline; font-size: 1.3em; }
+        
+        /* Meta Container */
+        .paper-meta { 
+            border-bottom: 2px double #000; padding-bottom: 12px; margin-bottom: 30px; font-size: 1.1em; 
+        }
+        
+        /* Layout Styles for Header */
+        .meta-container.standard {
+            display: flex; justify-content: space-between; flex-wrap: wrap;
+        }
+        .meta-container.simple {
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .meta-container.simple .meta-row { display: flex; gap: 10px; }
+        .meta-container.simple .meta-dash { min-width: 100px; flex: 1; }
+
+        .meta-row { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+        .meta-label { font-weight: bold; min-width: fit-content; }
+        .meta-dash { border-bottom: 1px dotted #000; min-width: 100px; text-align: right; flex: 1; }
+
+        .paper-title { text-align: center; font-size: 1.6em; margin-bottom: 40px; text-decoration: underline; text-underline-offset: 8px; }
+
+        #paperEditor { flex: 1; outline: none; min-height: 400px; white-space: pre-wrap; position: relative; z-index: 1; text-align: justify; }
+        #paperEditor:empty:before { content: 'یہاں لکھنا شروع کریں...'; color: #cbd5e1; pointer-events: none; position: absolute; top: 0; }
+
+        #sidebarEditor {
+            min-height: 120px; padding: 12px; font-family: var(--urdu-font); font-size: 1rem;
+            line-height: 2; direction: rtl; border: 1px solid var(--border-color); border-radius: 8px;
+            background: #fff; overflow-y: auto;
+        }
+
+        #paperEditor img, #sidebarEditor img { max-width: 100%; height: auto; display: block; margin: 10px auto; border-radius: 4px; }
+
+        .print-footer {
+            width: 100%; margin-top: auto; padding-top: 15px; border-top: 1px solid #000;
+            text-align: center; font-family: var(--urdu-font); font-weight: bold; font-size: 1rem; display: none;
+        }
+
+        /* Backdrop for Mobile */
+        .backdrop {
+            display: none; position: fixed; top: var(--header-height); left: 0; width: 100%;
+            height: calc(100% - var(--header-height)); background: rgba(0,0,0,0.5); z-index: 20;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .backdrop.show { display: block; opacity: 1; }
+
+        /* --- TOAST --- */
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #333; color: white; padding: 10px 20px; border-radius: 30px;
+            font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 3000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 420px;
+            text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal-title { font-size: 1.3rem; margin-bottom: 10px; font-weight: 800; color: var(--text-main); }
+        .modal-text { margin-bottom: 20px; color: #64748b; line-height: 1.6; font-size: 0.95rem; text-align: right; direction: rtl; }
+        .note-box {
+            background: #fffbeb; padding: 12px; border-radius: 8px; border: 1px solid #fcd34d;
+            margin-bottom: 20px; color: #92400e; font-size: 0.9rem; text-align: right; direction: rtl; display: flex; gap: 8px; align-items: flex-start;
+        }
+
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+        .btn-modal { padding: 10px 20px; border-radius: 8px; border: none; font-family: var(--urdu-font); font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-cancel { background: #f1f5f9; color: var(--text-main); }
+        .btn-confirm { background: var(--primary); color: white; }
+
+        /* --- MOBILE NAV --- */
+        .mobile-nav {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white;
+            border-top: 1px solid var(--border-color); height: 65px; z-index: 100;
+            padding-bottom: var(--safe-area-bottom); justify-content: space-around; align-items: center;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .nav-item {
+            flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: none; border: none; cursor: pointer; color: #94a3b8; gap: 4px;
+            font-size: 0.8rem; font-family: var(--sans-font); font-weight: 500;
+        }
+        .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .nav-item.active { color: var(--primary); }
+
+        /* --- PRINT STYLES (UPDATED FOR GAP & PAGE NUMBERS) --- */
+        @media print {
+            /* 1. Set the gap around the entire page (20mm margin) */
+            @page { 
+                margin: 20mm; 
+                size: A4; 
+            }
+            
+            body { 
+                background: white; height: auto; display: block; padding-top: 0; 
+                counter-reset: page; /* Initialize page counter */
+                -webkit-print-color-adjust: exact; 
+            }
+            
+            .top-nav, .mobile-nav, .backdrop, .main-sticky-toolbar, .sidebar, .modal-overlay, .toast { display: none !important; }
+            .app-container { display: block; height: auto; }
+            .main-area { padding: 0; overflow: visible; background: white; display: block; }
+            
+            /* 2. Adjust Paper padding to fit inside the page margin */
+            .paper { 
+                box-shadow: none; margin: 0; width: 100%; padding: 10mm; min-height: auto; page-break-after: always; 
+            }
+            
+            #paperEditor { max-height: none; overflow: visible; }
+            input, .sidebar-content { display: none; }
+            
+            /* 3. Fixed Footer with Page Numbers */
+            .print-footer { 
+                display: block !important; 
+                position: fixed; 
+                bottom: 10mm; /* 10mm from bottom edge (creates gap) */
+                left: 20mm; 
+                right: 20mm; /* Align with page margins */
+                width: auto;
+                padding-top: 10px;
+                border-top: 1px solid #000;
+                text-align: center; 
+                font-family: var(--urdu-font); 
+                font-weight: bold; 
+                font-size: 1rem; 
+            }
+
+            /* 4. Page Number Logic */
+            .print-footer::after {
+                content: " - صفحہ " counter(page); /* Adds " - صفحہ 1" */
+            }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 850px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; position: fixed; top: var(--header-height); right: 0; height: calc(100vh - var(--header-height)); transform: translateX(100%); border-right: none; }
+            .sidebar.show { transform: translateX(0); }
+            .close-sidebar-btn { display: block; }
+            .btn-icon { display: none; }
+            .main-area { width: 100%; padding: 15px; padding-top: 15px; }
+            .paper { width: 100%; padding: 15mm; min-height: auto; }
+            .paper-meta { flex-direction: column; gap: 4px; }
+            .meta-container.standard, .meta-container.simple { flex-direction: column; }
+            .meta-dash { min-width: 50px; }
+            .mobile-nav { display: flex; }
+            .main-sticky-toolbar { max-width: 100%; border-radius: 0; top: 0; border-left: none; border-right: none; margin-bottom: 20px;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- FIXED TOP HEADER -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            اردو اسائنمنٹ
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" type="button" onmousedown="toggleSidebarDesktop()" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <button class="btn-download" type="button" onmousedown="openPrintModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span style="margin-left:4px">PDF</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <div class="backdrop" id="backdrop" onmousedown="toggleMobile('preview')"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">ترتیبات</span>
+                <button class="close-sidebar-btn" type="button" onmousedown="toggleMobile('preview')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+
+            <div class="sidebar-content">
+                
+                <span class="section-label">الفاظ کی شمارتی</span>
+                <div class="stats-box">
+                    <div class="stat-badge" title="Words">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                        <span id="wordCount">0</span> الفاظ
+                    </div>
+                    <div class="stat-badge" title="Characters">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+                        <span id="charCount">0</span> حروف
+                    </div>
+                </div>
+
+                <span class="section-label">پیشنتی (Header & Footer)</span>
+                <div class="input-group">
+                    <label style="font-size: 0.9rem; margin-bottom: 5px; display:block; color:var(--text-main)">ہیڈر کی اسٹائل</label>
+                    <select id="headerLayoutSelect" onchange="updateHeaderLayout()" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border-color);">
+                        <option value="standard">معیاری (Standard)</option>
+                        <option value="simple">سادہ (Simple/Left)</option>
+                    </select>
+                </div>
+
+                <span class="section-label">اسائنمنٹ کی معلومات</span>
+                <div class="input-group"><input type="text" id="inSchool" placeholder="تعارفیہ / ادارے کا نام" oninput="syncMeta()"></div>
+                <div class="input-group"><input type="text" id="inSubject" placeholder="مضمون (Subject)" oninput="syncMeta()"></div>
+                <div class="input-group"><input type="text" id="inName" placeholder="طالب علم کا نام" oninput="syncMeta()"></div>
+                <div class="input-group"><input type="text" id="inSemester" placeholder="کلاس / سمسٹر" oninput="syncMeta()"></div>
+                <div class="input-group"><input type="text" id="inRoll" placeholder="رول نمبر" oninput="syncMeta()"></div>
+                <div class="input-group date-row">
+                    <input type="text" id="inDate" placeholder="تاریخ" oninput="syncMeta()">
+                    <button class="btn-small" type="button" onmousedown="setToday()">آج</button>
+                </div>
+                <div class="input-group"><input type="text" id="inTitle" placeholder="اسائنمنٹ کا عنوان" oninput="syncMeta()"></div>
+
+                <span class="section-label">فوٹر (Footer)</span>
+                <div class="input-group">
+                    <input type="text" id="inFooter" placeholder="کسٹم فوٹر (اختیاری)" oninput="syncMeta()">
+                    <small style="color:#94a3b8; font-size:0.8rem">خالی چھوڑیں تو خود بخود تاریخ آئے گی</small>
+                </div>
+
+                <span class="section-label">بنیادی ترتیبات</span>
+                <div class="slider-box">
+                    <div class="slider-header"><span>فونٹ سائز</span> <span id="sizeVal">18px</span></div>
+                    <input type="range" id="sizeRange" min="12" max="32" value="18" oninput="updateBaseSettings()">
+                </div>
+                <div class="slider-box">
+                    <div class="slider-header"><span>لائن فاصلہ</span> <span id="lineVal">2.2</span></div>
+                    <input type="range" id="lineRange" min="1.5" max="3.0" step="0.1" value="2.2" oninput="updateBaseSettings()">
+                </div>
+
+                <span class="section-label">موبائل میں لکھیں</span>
+                <div id="sidebarEditor" contenteditable="true" class="sidebar-editor" spellcheck="false" oninput="handleInput('sidebar')"></div>
+                <div style="text-align: left; margin-top: 5px;">
+                    <button class="btn-small" onclick="clearContent()" style="background:#fee2e2; color:#ef4444;">صاف کریں</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Paper Area -->
+        <main class="main-area">
+            <!-- STICKY TOOLBAR -->
+            <div class="main-sticky-toolbar" id="mainToolbar">
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); exec('undo')" title="Undo">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+                </button>
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); exec('redo')" title="Redo">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path></svg>
+                </button>
+                <div class="tool-divider"></div>
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); exec('bold')" title="Bold"><b>B</b></button>
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); exec('italic')" title="Italic"><i>I</i></button>
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); exec('underline')" title="Underline"><u>U</u></button>
+                
+                <div class="tool-divider"></div>
+
+                <button class="tool-btn btn-highlight" type="button" onmousedown="event.preventDefault(); applyHighlight()" title="Highlight">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                </button>
+
+                <div class="tool-divider"></div>
+
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); exec('justifyLeft')" title="Right (Start)">R</button>
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); exec('justifyFull')" title="Justify">J</button>
+                
+                <!-- SIZE GROUP -->
+                <div class="size-group">
+                    <button type="button" onmousedown="event.preventDefault(); adjustSize(-1)">-</button>
+                    <input type="number" id="sizeInput" value="18" onkeypress="if(event.key==='Enter') applySizeFromInput()">
+                    <button type="button" onmousedown="event.preventDefault(); adjustSize(1)">+</button>
+                </div>
+
+                <!-- Image Upload -->
+                <button class="tool-btn" type="button" onmousedown="event.preventDefault(); triggerImageUpload()" title="Add Image">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                </button>
+                <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="handleImageUpload(this)">
+            </div>
+
+            <div class="paper paper-font">
+                <div class="paper-header-school" id="outSchool">تعارفیہ / ادارے کا نام</div>
+                
+                <!-- Dynamic Meta Container -->
+                <div id="metaContainer" class="paper-meta meta-container standard">
+                    <div class="meta-row"><span class="meta-label">مضمون:</span> <span class="meta-dash" id="outSubject">........................</span></div>
+                    <div class="meta-row"><span class="meta-label">نام:</span> <span class="meta-dash" id="outName">........................</span></div>
+                    <div class="meta-row"><span class="meta-label">سمسٹر:</span> <span class="meta-dash" id="outSemester">........................</span></div>
+                    <div class="meta-row"><span class="meta-label">رول نمبر:</span> <span class="meta-dash" id="outRoll">........................</span></div>
+                    <div class="meta-row"><span class="meta-label">تاریخ:</span> <span class="meta-dash" id="outDate">........................</span></div>
+                </div>
+
+                <div class="paper-title" id="outTitle">عنوان</div>
+                <div id="paperEditor" contenteditable="true" spellcheck="false" oninput="handleInput('paper')"></div>
+                
+                <div class="print-footer" id="printFooter">تاریخ | تعارفیہ</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PRINT CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="printModal">
+        <div class="modal-box">
+            <div class="modal-title">پی ڈی ایف محفوظ کریں</div>
+            <div class="note-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <div>
+                    <b>اہم نوٹ:</b> پرنٹ ونڈو کے سیٹنگز میں جا کر <b>"Background graphics"</b> (پس منظر کا گرافکس) کو آن (Check) کریں تاکہ ہائلائٹر نظر آئے۔
+                </div>
+            </div>
+            <div class="modal-text">
+                <b>"Save as PDF"</b> پر کلک کریں۔
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" type="button" onmousedown="closePrintModal()">منسوخ کریں</button>
+                <button class="btn-modal btn-confirm" type="button" onmousedown="confirmPrint()">محفوظ کریں</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <button class="nav-item" type="button" onmousedown="toggleMobile('edit')" id="mobEdit">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span>لکھیں</span>
+        </button>
+        <button class="nav-item active" type="button" onmousedown="toggleMobile('preview')" id="mobPrev">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span>پیش نظارہ</span>
+        </button>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">پیغام</div>
+
+    <script>
+        // --- DATA SYNC & METADATA ---
+        const metaFields = [
+            { in: 'inSchool', out: 'outSchool', def: 'تعارفیہ / ادارے کا نام' },
+            { in: 'inSubject', out: 'outSubject', def: '........................' },
+            { in: 'inName', out: 'outName', def: '........................' },
+            { in: 'inSemester', out: 'outSemester', def: '........................' },
+            { in: 'inRoll', out: 'outRoll', def: '........................' },
+            { in: 'inDate', out: 'outDate', def: '........................' },
+            { in: 'inTitle', out: 'outTitle', def: 'عنوان' }
+        ];
+
+        function handleInput(source) {
+            if (source === 'sidebar') {
+                document.getElementById('paperEditor').innerHTML = document.getElementById('sidebarEditor').innerHTML;
+            } else {
+                document.getElementById('sidebarEditor').innerHTML = document.getElementById('paperEditor').innerHTML;
+            }
+            updateStats();
+            saveDebounced();
+        }
+
+        function syncMeta() {
+            metaFields.forEach(f => {
+                const val = document.getElementById(f.in).value;
+                const el = document.getElementById(f.out);
+                el.innerText = val ? val : f.def;
+            });
+            
+            // Footer Logic
+            const customFooter = document.getElementById('inFooter').value;
+            const school = document.getElementById('inSchool').value;
+            const date = document.getElementById('inDate').value;
+            
+            let footerText = "";
+            if (customFooter) {
+                footerText = customFooter;
+            } else {
+                if (date && school) footerText = `${date} | ${school}`;
+                else if (date) footerText = date;
+                else if (school) footerText = school;
+                else footerText = "تاریخ | تعارفیہ";
+            }
+            document.getElementById('printFooter').innerText = footerText;
+            saveDebounced();
+        }
+
+        // --- HEADER LAYOUT LOGIC ---
+        function updateHeaderLayout() {
+            const layout = document.getElementById('headerLayoutSelect').value;
+            const container = document.getElementById('metaContainer');
+            container.classList.remove('standard', 'simple');
+            container.classList.add(layout);
+            saveDebounced();
+        }
+
+        function updateBaseSettings() {
+            const s = document.getElementById('sizeRange').value;
+            const l = document.getElementById('lineRange').value;
+            document.getElementById('sizeVal').innerText = s + 'px';
+            document.getElementById('lineVal').innerText = l;
+            document.getElementById('sizeInput').value = s;
+            document.documentElement.style.setProperty('--base-font-size', s + 'px');
+            document.documentElement.style.setProperty('--base-line-height', l);
+            saveDebounced();
+        }
+
+        function exec(cmd) { 
+            document.execCommand(cmd); 
+            document.getElementById('paperEditor').focus();
+            saveDebounced();
+        }
+
+        function clearContent() {
+            if(confirm('کیا آپ واقعی سبھی متن کو صاف کرنا چاہتے ہیں؟')) {
+                document.getElementById('paperEditor').innerHTML = '';
+                document.getElementById('sidebarEditor').innerHTML = '';
+                updateStats();
+                save();
+            }
+        }
+
+        // --- UPDATED FONT SIZE LOGIC ---
+        function adjustSize(amount) {
+            const editor = document.getElementById('paperEditor');
+            const selection = window.getSelection();
+            if (selection.rangeCount === 0) return;
+            const savedRange = selection.getRangeAt(0).cloneRange();
+            const selectedText = savedRange.toString();
+
+            if (!selectedText) {
+                showToast("براہ کرم پہلے متن کو منتخب کریں");
+                return;
+            }
+
+            const input = document.getElementById('sizeInput');
+            let val = parseInt(input.value) || 18;
+            val += amount;
+            if(val < 8) val = 8;
+            if(val > 72) val = 72;
+            input.value = val;
+
+            editor.focus();
+            selection.removeAllRanges();
+            selection.addRange(savedRange);
+
+            const html = `<span style="font-size: ${val}px; font-weight: 700; font-family: 'Noto Nastaliq Urdu', serif; line-height: 1.5;">${selectedText}</span>`;
+            document.execCommand('insertHTML', false, html);
+
+            setTimeout(() => {
+                const newSelection = window.getSelection();
+                const newRange = document.createRange();
+                let node = newSelection.anchorNode;
+                if (node.nodeType === 3) node = node.parentNode;
+                while (node && node !== editor) {
+                    if (node.nodeName === 'SPAN' && node.style.fontSize.includes(val + 'px')) {
+                        newRange.selectNodeContents(node);
+                        newSelection.removeAllRanges();
+                        newSelection.addRange(newRange);
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+            }, 0); 
+            saveDebounced();
+        }
+
+        function applySizeFromInput() {
+            const editor = document.getElementById('paperEditor');
+            const selection = window.getSelection();
+            if (selection.rangeCount === 0) return;
+            const savedRange = selection.getRangeAt(0).cloneRange();
+            const selectedText = savedRange.toString();
+
+            if (!selectedText) {
+                showToast("براہ کرم پہلے متن کو منتخب کریں");
+                return;
+            }
+
+            const size = document.getElementById('sizeInput').value;
+            editor.focus();
+            selection.removeAllRanges();
+            selection.addRange(savedRange);
+
+            const html = `<span style="font-size: ${size}px; font-weight: 700; font-family: 'Noto Nastaliq Urdu', serif; line-height: 1.5;">${selectedText}</span>`;
+            document.execCommand('insertHTML', false, html);
+
+            setTimeout(() => {
+                const newSelection = window.getSelection();
+                const newRange = document.createRange();
+                let node = newSelection.anchorNode;
+                if (node.nodeType === 3) node = node.parentNode;
+                while (node && node !== editor) {
+                    if (node.nodeName === 'SPAN' && node.style.fontSize.includes(size + 'px')) {
+                        newRange.selectNodeContents(node);
+                        newSelection.removeAllRanges();
+                        newSelection.addRange(newRange);
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+            }, 0);
+            saveDebounced();
+        }
+
+        function applyHighlight() {
+            const parent = window.getSelection().anchorNode.parentElement;
+            if (parent.style.backgroundColor === 'rgb(254, 240, 138)' || parent.style.backgroundColor === '#fef08a') {
+                 document.execCommand('hiliteColor', false, 'transparent');
+            } else {
+                 document.execCommand('hiliteColor', false, '#fef08a');
+            }
+            saveDebounced();
+        }
+        
+        function triggerImageUpload() { document.getElementById('imgInput').click(); }
+
+        function handleImageUpload(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 1000000) { 
+                    showToast("وینر: بہت بڑی تصویر اسٹوریج بھر سکتی ہے", 3000);
+                }
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.execCommand('insertImage', false, e.target.result);
+                    saveDebounced();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function setToday() {
+            const date = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const todayStr = new Intl.DateTimeFormat('ur-PK', options).format(date);
+            document.getElementById('inDate').value = todayStr;
+            syncMeta();
+        }
+
+        function updateStats() {
+            const text = document.getElementById('paperEditor').innerText || "";
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+            const chars = text.length;
+            document.getElementById('wordCount').innerText = words;
+            document.getElementById('charCount').innerText = chars;
+        }
+
+        // --- UI STATE & HELPERS ---
+        function toggleSidebarDesktop() {
+            const sb = document.getElementById('sidebar');
+            if (sb.style.display === 'none') {
+                sb.style.display = 'flex';
+            } else {
+                sb.style.display = 'none';
+            }
+        }
+
+        function toggleMobile(mode) {
+            const sb = document.getElementById('sidebar');
+            const bd = document.getElementById('backdrop');
+            const edit = document.getElementById('mobEdit');
+            const prev = document.getElementById('mobPrev');
+            
+            if (mode === 'edit') {
+                sb.style.display = 'flex';
+                void sb.offsetWidth; 
+                sb.style.transform = 'translateX(0)';
+                bd.classList.add('show');
+                edit.classList.add('active');
+                prev.classList.remove('active');
+            } else {
+                sb.style.transform = 'translateX(100%)';
+                bd.classList.remove('show');
+                setTimeout(() => { if(window.innerWidth <= 850) sb.style.display = 'none'; }, 300);
+                edit.classList.remove('active');
+                prev.classList.add('active');
+            }
+        }
+
+        const modal = document.getElementById('printModal');
+        function openPrintModal() { modal.classList.add('show'); }
+        function closePrintModal() { modal.classList.remove('show'); }
+        function confirmPrint() {
+            closePrintModal();
+            setTimeout(() => window.print(), 300);
+        }
+
+        // --- STORAGE & INIT ---
+        let saveTimeout;
+        function saveDebounced() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(save, 1000);
+        }
+
+        function save() {
+            const data = {};
+            metaFields.forEach(f => data[f.in] = document.getElementById(f.in).value);
+            data['body'] = document.getElementById('paperEditor').innerHTML;
+            data['size'] = document.getElementById('sizeRange').value;
+            data['line'] = document.getElementById('lineRange').value;
+            data['layout'] = document.getElementById('headerLayoutSelect').value;
+            data['footer'] = document.getElementById('inFooter').value;
+            
+            try {
+                localStorage.setItem('urduApp_v5', JSON.stringify(data));
+            } catch (e) {
+                showToast("میموری بھر گئی ہے! براہ کرم تصاویر کو حذف کریں۔");
+            }
+        }
+
+        function load() {
+            const d = JSON.parse(localStorage.getItem('urduApp_v5'));
+            if (d) {
+                metaFields.forEach(f => { if(d[f.in]) document.getElementById(f.in).value = d[f.in]; });
+                if(d['body']) {
+                    document.getElementById('paperEditor').innerHTML = d['body'];
+                    document.getElementById('sidebarEditor').innerHTML = d['body'];
+                }
+                if(d['size']) document.getElementById('sizeRange').value = d['size'];
+                if(d['line']) document.getElementById('lineRange').value = d['line'];
+                if(d['layout']) {
+                    document.getElementById('headerLayoutSelect').value = d['layout'];
+                    updateHeaderLayout();
+                }
+                if(d['footer']) document.getElementById('inFooter').value = d['footer'];
+                
+                updateBaseSettings();
+                syncMeta();
+                updateStats();
+            }
+        }
+
+        function showToast(msg, duration=2000) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => { t.classList.remove('show'); }, duration);
+        }
+
+        window.onload = load;
+
+        window.onresize = function() {
+            if (window.innerWidth > 850) {
+                document.getElementById('sidebar').style.display = 'flex';
+                document.getElementById('sidebar').style.transform = 'none';
+                document.getElementById('backdrop').classList.remove('show');
+            } else {
+                document.getElementById('sidebar').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
