@@ -68,6 +68,7 @@ body {
     overflow: hidden;
     color: var(--ink);
     height: 100vh;
+    height: 100dvh;
 }
 
 /* ═══════════════════════════════════════════════
@@ -75,7 +76,7 @@ body {
 ═══════════════════════════════════════════════ */
 #dashView, #editorView {
     position: fixed; inset: 0;
-    height: 100vh; width: 100%;
+    height: 100vh; height: 100dvh; width: 100%;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                 opacity   0.4s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform, opacity;
@@ -632,6 +633,46 @@ input[type=range]::-webkit-slider-thumb {
     .paper-meta, .paper-school, .paper-title { page-break-inside: avoid; break-inside: avoid; }
 }
 
+/* ── INSTALL BANNER ── */
+.install-banner {
+    position: fixed; bottom: 0; left: 0; width: 100%; z-index: 5000;
+    background: var(--green-dp); color: #fff;
+    padding: 13px 18px calc(13px + var(--safe-b));
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.22);
+    transform: translateY(110%);
+    transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+}
+.install-banner.show { transform: translateY(0); }
+.install-banner-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: rgba(255,255,255,0.15); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+}
+.install-banner-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2; }
+.install-banner-text { flex: 1; }
+.install-banner-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; }
+.install-banner-sub   { font-size: 0.75rem; opacity: 0.8; font-family: var(--urdu); direction: rtl; line-height: 1.6; }
+.install-banner-btn {
+    flex-shrink: 0; background: #fff; color: var(--green-dp);
+    border: none; border-radius: var(--r-pill);
+    padding: 8px 16px; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; white-space: nowrap;
+    transition: opacity 0.15s;
+}
+.install-banner-btn:hover { opacity: 0.88; }
+.install-banner-close {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    border: none; background: rgba(255,255,255,0.15); color: #fff;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; line-height: 1;
+    transition: background 0.15s;
+}
+.install-banner-close:hover { background: rgba(255,255,255,0.28); }
+/* Push mob-nav up when banner is showing */
+body.banner-open .mob-nav { bottom: calc(70px + var(--safe-b)); }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 860px) {
     .doc-grid { grid-template-columns: 1fr 1fr; }
@@ -897,6 +938,19 @@ input[type=range]::-webkit-slider-thumb {
     </div>
 </div>
 
+<!-- INSTALL BANNER -->
+<div id="installBanner" class="install-banner" role="complementary" aria-label="Install app">
+    <div class="install-banner-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="install-banner-text">
+        <div class="install-banner-title">PDF Nastaliq انسٹال کریں</div>
+        <div class="install-banner-sub" id="bannerSub">ہوم اسکرین پر شامل کریں — بالکل مفت</div>
+    </div>
+    <button class="install-banner-btn" id="installBtn">انسٹال</button>
+    <button class="install-banner-close" onclick="dismissBanner()" aria-label="Dismiss">✕</button>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -995,6 +1049,16 @@ function openDoc(id) {
     setAutosave('saved');
 
     document.body.classList.add('in-editor');
+    // On mobile: always start with canvas visible (sidebar hidden)
+    if (window.innerWidth <= 860) {
+        const sb = document.getElementById('eSidebar');
+        const bd = document.getElementById('eBackdrop');
+        sb.style.display = 'none';
+        sb.style.transform = 'translateX(100%)';
+        bd.classList.remove('show');
+        document.getElementById('mobEdit').classList.remove('active');
+        document.getElementById('mobPrev').classList.add('active');
+    }
     // scroll editor canvas to top
     setTimeout(() => {
         const canvas = document.querySelector('.e-canvas');
@@ -1374,6 +1438,68 @@ function showToast(msg, dur=2200) {
     t.innerText = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), dur);
 }
+
+/* ════════════════════════════════════════════════
+   INSTALL BANNER
+════════════════════════════════════════════════ */
+(function() {
+    const BANNER_KEY = 'pdfNastaliq_installDismissed';
+    let deferredPrompt = null;
+
+    function isIOS() {
+        return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+    function isInStandaloneMode() {
+        return window.matchMedia('(display-mode: standalone)').matches
+            || window.navigator.standalone === true;
+    }
+
+    // Don't show if already installed or dismissed
+    if (isInStandaloneMode()) return;
+    if (localStorage.getItem(BANNER_KEY)) return;
+
+    const banner = document.getElementById('installBanner');
+    const btn    = document.getElementById('installBtn');
+    const sub    = document.getElementById('bannerSub');
+
+    function showBanner() {
+        setTimeout(() => {
+            banner.classList.add('show');
+            document.body.classList.add('banner-open');
+        }, 2500); // slight delay so it feels natural
+    }
+
+    function dismissBanner() {
+        banner.classList.remove('show');
+        document.body.classList.remove('banner-open');
+        localStorage.setItem(BANNER_KEY, '1');
+    }
+    window.dismissBanner = dismissBanner;
+
+    if (isIOS()) {
+        // iOS: no beforeinstallprompt — show manual instructions
+        sub.innerText = 'Safari میں Share بٹن → "Add to Home Screen" پر کریں';
+        btn.innerText = 'سمجھ گیا';
+        btn.addEventListener('click', dismissBanner);
+        showBanner();
+    } else {
+        // Android / Chrome: use native prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showBanner();
+        });
+        btn.addEventListener('click', async () => {
+            if (!deferredPrompt) { dismissBanner(); return; }
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            dismissBanner();
+        });
+        // If app gets installed from prompt, hide banner
+        window.addEventListener('appinstalled', dismissBanner);
+    }
+})();
 
 /* ════════════════════════════════════════════════
    INIT
