@@ -1,7 +1,6 @@
 {
   "id": "/"
-
-  "name": "PDF Nastaliq Viewer",
+ "name": "PDF Nastaliq Viewer",
   "short_name": "PDF Nastaliq",
   "description": "A web app to view and process PDF files with Nastaliq font support.",
   "start_url": "/",
