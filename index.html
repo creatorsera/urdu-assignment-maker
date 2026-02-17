@@ -167,6 +167,9 @@
         }
         .btn-small:hover { background: #dbeafe; }
 
+        .date-row { display: flex; gap: 8px; align-items: stretch; }
+        .date-row input { flex: 1; }
+
         /* Sliders */
         .slider-box { background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border-color); }
         .slider-header { display: flex; justify-content: space-between; font-family: var(--sans-font); font-size: 0.8rem; margin-bottom: 8px; color: var(--text-main); }
@@ -324,9 +327,15 @@
         .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .nav-item.active { color: var(--primary); }
 
-        /* --- PRINT STYLES (SIMPLE SYSTEM, LITTLE PADDING, ENGLISH NOTICE) --- */
+        /* --- PRINT STYLES --- */
         @media print {
-            /* 1. Standard Page Layout */
+            /* 1. Page Setup: single margin source — @page handles white border.
+               .paper gets no extra padding so margins are not doubled. */
+            @page { 
+                margin: 20mm 15mm; 
+                size: A4; 
+            }
+
             body { 
                 direction: rtl; 
                 background: white; 
@@ -335,57 +344,57 @@
                 padding-top: 0; 
             }
             
-            @page { 
-                margin: 15mm; 
-                size: A4; 
-            }
-            
-            /* Hide UI Elements */
-            .top-nav, .mobile-nav, .backdrop, .main-sticky-toolbar, .sidebar, .modal-overlay, .toast { display: none !important; }
+            /* Hide all UI chrome */
+            .top-nav, .mobile-nav, .backdrop, .main-sticky-toolbar,
+            .sidebar, .modal-overlay, .toast { display: none !important; }
             .app-container { display: block; height: auto; }
             .main-area { padding: 0; overflow: visible; background: white; display: block; }
             
-            /* 2. Paper Layout */
+            /* 2. Paper: no extra padding (page margin handles it), use flex for footer */
             .paper { 
                 box-shadow: none; 
                 margin: 0; 
+                padding: 0;
                 width: 100%; 
-                padding: 15mm; /* Consistent padding */
                 min-height: auto; 
-                display: block;
+                display: flex;
+                flex-direction: column;
             }
 
-            /* 3. Editor Fixes (Merging/Scattering) + LITTLE PADDING */
+            /* 3. Editor: respect user-chosen font size & line height; keep pre-wrap
+               so line breaks match what the user sees on screen */
             #paperEditor { 
                 max-height: none; 
                 overflow: visible;
-                white-space: normal; /* Fixes scattering lines */
-                line-height: 2.5; /* Fixes merging letters */
+                white-space: pre-wrap;
+                line-height: var(--base-line-height);
                 text-align: justify;
                 direction: rtl;
                 font-family: 'Noto Nastaliq Urdu', serif;
-                font-size: 12pt;
-                padding-bottom: 20px; /* Little padding for footer */
+                font-size: var(--base-font-size);
+                flex: 1;
             }
             
             input, .sidebar-content { display: none; }
             
-            /* 4. Footer (Standard System) */
+            /* 4. Footer: margin-top auto pushes it to bottom (parent is flex) */
             .print-footer { 
-                display: block; 
-                margin-top: 15px; /* Little spacing from text */
+                display: block;
+                margin-top: auto;
+                padding-top: 10px;
                 border-top: 1px solid #000; 
                 text-align: center; 
                 font-family: var(--urdu-font); 
                 font-weight: bold; 
-                font-size: 1rem; 
+                font-size: var(--base-font-size); 
                 color: #000;
                 direction: rtl;
             }
 
-            /* Prevent headers from breaking awkwardly */
+            /* 5. Prevent header blocks from splitting across pages */
             .paper-meta, .paper-header-school, .paper-title {
                 page-break-inside: avoid;
+                break-inside: avoid;
             }
         }
 
