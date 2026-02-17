@@ -1,0 +1,23 @@
+{
+  "name": "PDF Nastaliq Viewer",
+  "short_name": "PDF Nastaliq",
+  "description": "A web app to view and process PDF files with Nastaliq font support.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#111111",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
